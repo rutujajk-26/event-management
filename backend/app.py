@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from flask import Flask, jsonify
 from flask_cors import CORS
-from models import db
+from models import db, Event
 from config import config_map, DATABASE_DIR
 from routes.events import events_bp
 from routes.bookings import bookings_bp
@@ -35,6 +35,10 @@ def create_app(env: str = 'default') -> Flask:
         DATABASE_DIR.mkdir(parents=True, exist_ok=True)
         db.create_all()
         logger.info(f'Database tables initialized at {DATABASE_DIR}')
+
+        if Event.query.count() == 0:
+            logger.info('No events found in database; seeding sample featured events.')
+            seed_events()
 
     @app.route('/health', methods=['GET'])
     def health():
