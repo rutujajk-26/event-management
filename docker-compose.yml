@@ -1,0 +1,82 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: campustix-api
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=sqlite:///database/events.db
+      - SECRET_KEY=${SECRET_KEY:-campustix-secret-2024}
+    volumes:
+      - db_data:/app/database
+    networks:
+      - campustix-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    image: node:20-alpine
+    container_name: campustix-frontend
+    working_dir: /app
+    ports:
+      - "4173:4173"
+    environment:
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run build && npm run preview -- --host 0.0.0.0"
+    networks:
+      - campustix-net
+    depends_on:
+      - api
+
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: campustix-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - campustix-net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: campustix-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - campustix-net
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+networks:
+  campustix-net:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+  grafana_data:
+    driver: local
