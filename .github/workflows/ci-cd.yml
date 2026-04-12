@@ -150,45 +150,15 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}:latest
-          format: table   # ✅ changed (no SARIF issue)
+          format: table
 
       - name: Skip SARIF upload
-        run: echo "Skipping upload to avoid permission issues"
+        run: echo "Skipping upload"
 
   deploy:
-  name: Deploy to Kubernetes
-  runs-on: ubuntu-latest
-
-  steps:
-    - name: Skip deployment
-      run: echo "Deployment skipped"
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
-
-      - name: Configure kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig.yaml
-
-      - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: kubeconfig.yaml
-          IMAGE_TAG: sha-${{ github.sha }}
-        run: |
-          kubectl apply -f k8s/ --namespace=campustix --validate=false || true
-          kubectl set image deployment/campustix-api \
-            api=${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}:${IMAGE_TAG} \
-            --namespace=campustix
-          kubectl rollout status deployment/campustix-api \
-            --namespace=campustix --timeout=120s
-
-      - name: Verify deployment
-        env:
-          KUBECONFIG: kubeconfig.yamlx  
-        run: |
-          kubectl get pods --namespace=campustix
-          kubectl get services --namespace=campustix
+      - name: Skip deployment
+        run: echo "Deployment skipped"
