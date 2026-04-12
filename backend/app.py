@@ -5,6 +5,7 @@ Flask REST API Backend
 
 import os
 import logging
+from datetime import date
 from pathlib import Path
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -18,6 +19,105 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
 )
 logger = logging.getLogger(__name__)
+
+
+def seed_events() -> None:
+    sample_events = [
+        {
+            'title': 'TechFest 2024 - Annual Tech Symposium',
+            'description': 'Join us for the biggest tech event of the year! Featuring keynote speakers from top tech companies, hands-on workshops on AI/ML, web development, and cybersecurity. Network with industry professionals and showcase your projects at the innovation expo.',
+            'date': '2024-04-15',
+            'time': '09:00',
+            'venue': 'Main Auditorium, Block A',
+            'category': 'Technology',
+            'price': 200.0,
+            'total_seats': 500,
+            'available_seats': 342,
+            'image_url': 'https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'organizer': 'Department of Computer Science',
+        },
+        {
+            'title': 'Kulturama 2024 - Annual Cultural Festival',
+            'description': 'Three days of music, dance, drama, and art celebrating our diverse cultural heritage. Watch stunning performances from student groups, participate in competitions, and enjoy live concerts by top artists. A festival of colors, sounds, and traditions!',
+            'date': '2024-04-20',
+            'time': '16:00',
+            'venue': 'Open Air Theater, Main Campus',
+            'category': 'Cultural',
+            'price': 150.0,
+            'total_seats': 1000,
+            'available_seats': 673,
+            'image_url': 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'organizer': 'Student Cultural Council',
+        },
+        {
+            'title': 'Sportanza 2024 - Annual Sports Meet',
+            'description': 'The ultimate college sports extravaganza with events in cricket, football, basketball, athletics, and more. Cheer for your department teams, witness thrilling competitions, and celebrate sportsmanship. Opening ceremony with a grand parade of all teams!',
+            'date': '2024-04-25',
+            'time': '07:00',
+            'venue': 'College Sports Complex',
+            'category': 'Sports',
+            'price': 100.0,
+            'total_seats': 2000,
+            'available_seats': 1456,
+            'image_url': 'https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'organizer': 'Sports Committee & Physical Education Dept',
+        },
+        {
+            'title': 'BizPlan Challenge 2024 - Business Competition',
+            'description': 'Present your innovative business ideas to a panel of industry veterans and venture capitalists. Categories include tech startups, social enterprises, and product innovations. Winner receives seed funding of ₹1,00,000! Pre-registration for teams of 2-4 members required.',
+            'date': '2024-05-01',
+            'time': '10:00',
+            'venue': 'Conference Hall A, Management Block',
+            'category': 'Business',
+            'price': 300.0,
+            'total_seats': 200,
+            'available_seats': 87,
+            'image_url': 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'organizer': 'MBA Department & Entrepreneurship Cell',
+        },
+        {
+            'title': 'Art Expo 2024 - Fine Arts Exhibition',
+            'description': 'A curated exhibition of student artwork spanning painting, sculpture, photography, digital art, and installation art. Over 200 pieces from students across all departments. Special live art performances and interactive installations throughout the day.',
+            'date': '2024-05-05',
+            'time': '11:00',
+            'venue': 'College Art Gallery, Creative Block',
+            'category': 'Arts',
+            'price': 50.0,
+            'total_seats': 300,
+            'available_seats': 218,
+            'image_url': 'https://images.pexels.com/photos/1183992/pexels-photo-1183992.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'organizer': 'Department of Fine Arts',
+        },
+        {
+            'title': 'Science & Innovation Fair 2024',
+            'description': 'Witness groundbreaking research and experiments by our brightest science students. Projects spanning physics, chemistry, biology, environmental science, and robotics. Guest lectures from research scientists and live demonstrations. Open to all science enthusiasts!',
+            'date': '2024-05-10',
+            'time': '09:30',
+            'venue': 'Science Exhibition Hall, Science Block',
+            'category': 'Science',
+            'price': 100.0,
+            'total_seats': 500,
+            'available_seats': 389,
+            'image_url': 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
+            'organizer': 'Science Departments Consortium',
+        },
+    ]
+    for item in sample_events:
+        event = Event(
+            title=item['title'],
+            description=item['description'],
+            date=date.fromisoformat(item['date']),
+            time=item['time'],
+            venue=item['venue'],
+            category=item['category'],
+            price=item['price'],
+            total_seats=item['total_seats'],
+            available_seats=item['available_seats'],
+            image_url=item['image_url'],
+            organizer=item['organizer'],
+        )
+        db.session.add(event)
+    db.session.commit()
 
 
 def create_app(env: str = 'default') -> Flask:
