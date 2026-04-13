@@ -13,6 +13,11 @@ interface AppContextType {
   authLoading: boolean;
   loginRole: 'admin' | 'student' | null;
   setLoginRole: (role: 'admin' | 'student' | null) => void;
+  theme: 'dark' | 'light';
+  eventRefreshCounter: number;
+  refreshEvents: () => void;
+  toggleTheme: () => void;
+  setTheme: (theme: 'dark' | 'light') => void;
   signOut: () => Promise<void>;
   setUser: (user: User | null) => void;
 }
@@ -37,6 +42,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loginRole, setLoginRole] = useState<'admin' | 'student' | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = window.localStorage.getItem('campusTixTheme');
+    return saved === 'light' ? 'light' : 'dark';
+  });
+  const [eventRefreshCounter, setEventRefreshCounter] = useState(0);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('campusTixTheme', theme);
+  }, [theme]);
 
   useEffect(() => {
     let mounted = true;
@@ -73,11 +88,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setCurrentPage('home');
   };
+
+  const refreshEvents = () => setEventRefreshCounter((value) => value + 1);
 
   return (
     <AppContext.Provider
@@ -92,6 +111,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         authLoading,
         loginRole,
         setLoginRole,
+        theme,
+        setTheme,
+        toggleTheme,
+        refreshEvents,
+        eventRefreshCounter,
         signOut,
         setUser,
       }}

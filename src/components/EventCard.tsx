@@ -1,4 +1,5 @@
 import { Calendar, MapPin, Users, Tag, Clock } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 import { Event } from '../types';
 
 const categoryColors: Record<string, string> = {
@@ -14,9 +15,12 @@ const categoryColors: Record<string, string> = {
 interface Props {
   event: Event;
   onBook: (event: Event) => void;
+  onView?: (event: Event) => void;
 }
 
-export default function EventCard({ event, onBook }: Props) {
+export default function EventCard({ event, onBook, onView }: Props) {
+  const { theme } = useApp();
+  const isDark = theme === 'dark';
   const soldOut = event.available_seats === 0;
   const almostFull = event.available_seats > 0 && event.available_seats <= 20;
   const fillPercent = Math.round(((event.total_seats - event.available_seats) / event.total_seats) * 100);
@@ -29,7 +33,10 @@ export default function EventCard({ event, onBook }: Props) {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+    <div
+      onClick={() => onView?.(event)}
+      className={`group rounded-2xl shadow-sm overflow-hidden transition-all duration-300 flex flex-col ${isDark ? 'bg-slate-900 border border-slate-800 text-slate-100 hover:shadow-xl hover:-translate-y-1' : 'bg-white border border-gray-100 hover:shadow-xl hover:-translate-y-1'} cursor-pointer`}
+    >
       <div className="relative h-48 overflow-hidden">
         <img
           src={event.image_url}
@@ -53,12 +60,12 @@ export default function EventCard({ event, onBook }: Props) {
       </div>
 
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-bold text-gray-900 text-lg leading-snug mb-1 line-clamp-2">
+        <h3 className={`font-bold text-lg leading-snug mb-1 line-clamp-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {event.title}
         </h3>
-        <p className="text-gray-500 text-sm line-clamp-2 mb-4">{event.description}</p>
+        <p className={`text-sm line-clamp-2 mb-4 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>{event.description}</p>
 
-        <div className="space-y-2 mb-4 text-sm text-gray-600">
+        <div className={`space-y-2 mb-4 text-sm ${isDark ? 'text-slate-400' : 'text-gray-600'}`}>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-teal-500 shrink-0" />
             <span>{formattedDate}</span>
@@ -95,15 +102,18 @@ export default function EventCard({ event, onBook }: Props) {
           </div>
         </div>
 
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className={`mt-auto flex items-center justify-between pt-4 border-t ${isDark ? 'border-slate-800' : 'border-gray-100'}`}>
           <div>
-            <span className="text-2xl font-bold text-gray-900">
+            <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
               {event.price === 0 ? 'Free' : `₹${event.price.toFixed(0)}`}
             </span>
-            {event.price > 0 && <span className="text-gray-400 text-sm ml-1">/ ticket</span>}
+            {event.price > 0 && <span className={`text-sm ml-1 ${isDark ? 'text-slate-400' : 'text-gray-400'}`} >/ ticket</span>}
           </div>
           <button
-            onClick={() => onBook(event)}
+            onClick={(eventClick) => {
+              eventClick.stopPropagation();
+              onBook(event);
+            }}
             disabled={soldOut}
             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95 ${
               soldOut

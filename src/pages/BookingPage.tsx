@@ -1,7 +1,7 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { ArrowLeft, Calendar, MapPin, Clock, Users, Tag, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { supabase } from '../lib/supabase';
+import { createBooking } from '../lib/api';
 import { loadRazorpayScript } from '../lib/razorpay';
 import { BookingFormData } from '../types';
 
@@ -33,7 +33,7 @@ interface Errors {
 }
 
 export default function BookingPage() {
-  const { navigate, selectedEvent, setBookingDetails, user } = useApp();
+  const { navigate, selectedEvent, setBookingDetails, user, refreshEvents } = useApp();
   const event = selectedEvent;
 
   const [form, setForm] = useState<BookingFormData>({
@@ -119,29 +119,19 @@ export default function BookingPage() {
 
   const saveBooking = async (status: string) => {
     const booking_ref = generateRef();
-    const { data, error } = await supabase
-      .from('bookings')
-      .insert({
-        event_id: event.id,
-        student_name: form.student_name.trim(),
-        email: form.email.trim().toLowerCase(),
-        phone: form.phone.trim(),
-        college_id: form.college_id.trim(),
-        num_tickets: form.num_tickets,
-        total_amount: totalAmount,
-        booking_ref,
-        status,
-      })
-      .select()
-      .single();
+    const data = await createBooking({
+      event_id: event.id,
+      student_name: form.student_name.trim(),
+      email: form.email.trim().toLowerCase(),
+      phone: form.phone.trim(),
+      college_id: form.college_id.trim(),
+      num_tickets: form.num_tickets,
+      total_amount: totalAmount,
+      booking_ref,
+      status,
+    });
 
-    if (error) throw error;
-
-    await supabase
-      .from('events')
-      .update({ available_seats: event.available_seats - form.num_tickets })
-      .eq('id', event.id);
-
+    refreshEvents();
     setBookingDetails(data);
     navigate('confirmation');
   };

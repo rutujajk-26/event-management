@@ -10,7 +10,7 @@ import SignupPage from './pages/SignupPage';
 import AdminPage from './pages/AdminPage';
 
 function AppContent() {
-  const { currentPage } = useApp();
+  const { currentPage, theme } = useApp();
 
   const renderPage = () => {
     switch (currentPage) {
@@ -26,7 +26,11 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div
+      className={`min-h-screen flex flex-col transition-colors duration-300 ${
+        theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
+      }`}
+    >
       <Navbar />
       <main className="flex-1">{renderPage()}</main>
       <Footer />

@@ -63,3 +63,23 @@ def test_filter_events_by_category(client):
     res = client.get('/api/events?category=Sports')
     assert res.status_code == 200
     assert len(res.json['data']) == 0
+
+
+def test_create_event(client):
+    payload = {
+        'title': 'New Event',
+        'description': 'A newly created event',
+        'date': '2026-06-01',
+        'time': '13:00',
+        'venue': 'Auditorium',
+        'category': 'Business',
+        'price': 250.0,
+        'total_seats': 150,
+        'image_url': 'https://example.com/event.jpg',
+        'organizer': 'Business Club',
+    }
+    res = client.post('/api/events', json=payload)
+    assert res.status_code == 201
+    assert res.json['success'] is True
+    assert res.json['data']['title'] == 'New Event'
+    assert res.json['data']['available_seats'] == 150

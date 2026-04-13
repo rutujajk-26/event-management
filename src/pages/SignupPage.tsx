@@ -162,7 +162,6 @@ export default function SignupPage() {
                 className="w-full appearance-none bg-transparent px-12 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none"
               />
             </div>
-            <p className="mt-2 text-xs text-slate-500">Use code <span className="font-semibold text-white">ADMIN2026</span> for admin access.</p>
           </label>
 
           <button

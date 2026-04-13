@@ -50,9 +50,10 @@ const categoryBorderInactive: Record<Category, string> = {
 };
 
 export default function EventsPage() {
-  const { navigate, setSelectedEvent, user } = useApp();
+  const { navigate, setSelectedEvent, user, eventRefreshCounter, theme } = useApp();
   const [events, setEvents] = useState<Event[]>([]);
   const [filtered, setFiltered] = useState<Event[]>([]);
+  const isDark = theme === 'dark';
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<Category>('All');
@@ -89,7 +90,7 @@ export default function EventsPage() {
       window.clearInterval(interval);
       window.removeEventListener('focus', onFocus);
     };
-  }, []);
+  }, [eventRefreshCounter]);
 
   useEffect(() => {
     if (!user) {
@@ -138,8 +139,8 @@ export default function EventsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 pt-28 pb-14 px-4">
+    <div className={`min-h-screen ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-gray-50 text-slate-900'}`}>
+      <div className={`bg-gradient-to-br ${isDark ? 'from-slate-900 to-slate-800' : 'from-cyan-600 to-teal-500'} pt-28 pb-14 px-4`}>
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -150,15 +151,15 @@ export default function EventsPage() {
               </p>
             </div>
             {user?.role === 'student' ? (
-              <div className="rounded-3xl border border-teal-500/20 bg-slate-950/70 px-5 py-4 text-teal-100">
-                <p className="text-sm uppercase tracking-[0.3em] text-teal-300">Student dashboard</p>
-                <p className="mt-2 text-lg font-semibold">Welcome back, {user.full_name}</p>
-                <p className="mt-1 text-sm text-slate-400">You have {bookingCount} booking{bookingCount === 1 ? '' : 's'}.</p>
+              <div className={`rounded-3xl border px-5 py-4 ${isDark ? 'border-teal-500/20 bg-slate-950/70 text-teal-100' : 'border-teal-500/20 bg-teal-50 text-slate-900'}`}>
+                <p className={`text-sm uppercase tracking-[0.3em] ${isDark ? 'text-teal-300' : 'text-teal-600'}`}>Student dashboard</p>
+                <p className={`mt-2 text-lg font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Welcome back, {user.full_name}</p>
+                <p className={`mt-1 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>You have {bookingCount} booking{bookingCount === 1 ? '' : 's'}.</p>
               </div>
             ) : user?.role === 'admin' ? (
               <button
                 onClick={() => navigate('admin')}
-                className="w-full sm:w-auto rounded-3xl bg-teal-500 px-6 py-3 text-sm font-semibold text-white hover:bg-teal-400 transition"
+                className="hero-button w-full sm:w-auto rounded-3xl bg-teal-500 px-6 py-3 text-sm font-semibold text-white transition-all shadow-lg shadow-teal-500/20 hover:bg-teal-400 active:scale-[0.98]"
               >
                 Open Admin Panel
               </button>
@@ -176,7 +177,7 @@ export default function EventsPage() {
               placeholder="Search events, venues, organizers..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow"
+              className={`w-full pl-11 pr-10 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow ${isDark ? 'bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500' : 'bg-white border border-gray-200 text-gray-900 placeholder-gray-400'}`}
             />
             {search && (
               <button
@@ -192,7 +193,7 @@ export default function EventsPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
+              className={`px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer ${isDark ? 'bg-slate-900 border border-slate-700 text-slate-100' : 'bg-white border border-gray-200 text-gray-700'}`}
             >
               <option value="date">Sort by Date</option>
               <option value="price_asc">Price: Low to High</option>

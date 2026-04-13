@@ -136,7 +136,7 @@ def create_app(env: str = 'default') -> Flask:
         db.create_all()
         logger.info(f'Database tables initialized at {DATABASE_DIR}')
 
-        if Event.query.count() == 0:
+        if env != 'testing' and Event.query.count() == 0:
             logger.info('No events found in database; seeding sample featured events.')
             seed_events()
 

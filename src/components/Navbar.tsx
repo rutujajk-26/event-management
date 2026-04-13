@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { GraduationCap, Menu, X, LogOut, UserPlus, Key } from 'lucide-react';
+import { GraduationCap, Menu, X, LogOut, UserPlus, Key, Sun, Moon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Navbar() {
-  const { navigate, currentPage, user, signOut } = useApp();
+  const { navigate, currentPage, user, signOut, theme, toggleTheme } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const links = [
@@ -12,7 +12,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50">
+    <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b ${theme === 'dark' ? 'bg-slate-900/95 border-slate-700/50' : 'bg-white/95 border-slate-200'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <button
@@ -44,22 +44,41 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className={`rounded-2xl border px-3 py-2 text-sm transition ${
+                theme === 'dark'
+                  ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'
+              }`}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             {user ? (
               <>
                 {user.role === 'admin' && (
                   <button
                     onClick={() => navigate('admin')}
-                    className="rounded-2xl border border-teal-500/30 bg-teal-500/10 px-4 py-2 text-sm text-teal-200 hover:bg-teal-500/20 transition"
+                    className={`hero-button rounded-3xl px-4 py-2 text-sm font-semibold transition-all ${
+                      theme === 'dark'
+                        ? 'bg-teal-500 text-slate-950 shadow-teal-500/30 hover:bg-teal-400'
+                        : 'bg-teal-500 text-white shadow-teal-500/25 hover:bg-teal-400'
+                    }`}
                   >
                     Admin Panel
                   </button>
                 )}
-                <span className="px-4 py-2 rounded-2xl bg-slate-800 text-slate-200 text-sm">
+                <span className={`px-4 py-2 rounded-2xl text-sm ${theme === 'dark' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-900'}`}>
                   {user.full_name || 'Logged in'}
                 </span>
                 <button
                   onClick={() => signOut()}
-                  className="rounded-2xl bg-slate-700 px-4 py-2 text-sm text-white hover:bg-slate-600 transition-flex items-center flex gap-2"
+                  className={`rounded-2xl px-4 py-2 text-sm transition flex items-center gap-2 ${
+                    theme === 'dark'
+                      ? 'bg-slate-700 text-white hover:bg-slate-600'
+                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                  }`}
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
@@ -69,14 +88,22 @@ export default function Navbar() {
               <>
                 <button
                   onClick={() => navigate('login')}
-                  className="flex items-center gap-2 rounded-2xl border border-teal-500/20 px-4 py-2 text-sm text-teal-200 hover:bg-slate-800 transition"
+                  className={`flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm transition ${
+                    theme === 'dark'
+                      ? 'border-teal-500/20 text-teal-200 hover:bg-slate-800'
+                      : 'border-teal-500/20 text-teal-700 hover:bg-slate-100'
+                  }`}
                 >
                   <Key className="w-4 h-4" />
                   Login
                 </button>
                 <button
                   onClick={() => navigate('signup')}
-                  className="flex items-center gap-2 rounded-2xl bg-teal-500 px-4 py-2 text-sm text-white hover:bg-teal-400 transition"
+                  className={`flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm transition ${
+                    theme === 'dark'
+                      ? 'border-teal-500/20 text-teal-200 hover:bg-slate-800'
+                      : 'border-teal-500/20 text-teal-700 hover:bg-slate-100'
+                  }`}
                 >
                   <UserPlus className="w-4 h-4" />
                   Sign Up
@@ -87,14 +114,14 @@ export default function Navbar() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-slate-300 hover:text-white"
+            className={`md:hidden p-2 transition ${theme === 'dark' ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-900'}`}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden border-t border-slate-700/50 py-3 space-y-1">
+          <div className={`md:hidden py-3 space-y-1 ${theme === 'dark' ? 'border-t border-slate-700/50 bg-slate-950' : 'border-t border-slate-200 bg-white'}`}>
             {links.map(({ label, page }) => (
               <button
                 key={page}
@@ -129,13 +156,13 @@ export default function Navbar() {
               <>
                 <button
                   onClick={() => { navigate('login'); setMobileOpen(false); }}
-                  className="w-full text-left px-4 py-2.5 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700/50"
+                  className={`w-full text-left px-4 py-2.5 rounded-md text-sm font-medium transition ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-700/50' : 'text-slate-700 hover:bg-slate-100'}`}
                 >
                   Login
                 </button>
                 <button
                   onClick={() => { navigate('signup'); setMobileOpen(false); }}
-                  className="w-full text-left px-4 py-2.5 rounded-md text-sm font-medium text-teal-200 hover:bg-slate-700/50"
+                  className={`w-full text-left px-4 py-2.5 rounded-md text-sm font-medium transition ${theme === 'dark' ? 'text-teal-200 hover:bg-slate-700/50' : 'text-teal-700 hover:bg-slate-100'}`}
                 >
                   Sign Up
                 </button>
