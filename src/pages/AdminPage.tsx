@@ -203,7 +203,7 @@ export default function AdminPage() {
       <div className={`min-h-screen flex items-center justify-center px-4 py-16 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
         <div className={`text-center max-w-xl rounded-3xl border p-10 shadow-2xl ${isDark ? 'border-slate-800 bg-slate-900/95 text-white' : 'border-slate-200 bg-white text-slate-900'}`}>
           <h1 className="text-3xl font-bold mb-4">Admin access required</h1>
-          <p className="text-slate-400 mb-6">Please sign in with your admin credentials to manage events.</p>
+          <p className={`${bodyText} mb-6">Please sign in with your admin credentials to manage events.</p>
           <button
             onClick={() => navigate('login')}
             className="hero-button rounded-2xl bg-teal-500 px-5 py-3 text-white font-semibold transition-all hover:bg-teal-400 active:scale-[0.98]"
@@ -220,7 +220,7 @@ export default function AdminPage() {
       <div className={`min-h-screen flex items-center justify-center px-4 py-16 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
         <div className={`text-center max-w-xl rounded-3xl border p-10 shadow-2xl ${isDark ? 'border-slate-800 bg-slate-900/95 text-white' : 'border-slate-200 bg-white text-slate-900'}`}>
           <h1 className="text-3xl font-bold mb-4">Access denied</h1>
-          <p className="text-slate-400 mb-6">Only administrators can use this dashboard.</p>
+          <p className={`${bodyText} mb-6">Only administrators can use this dashboard.</p>
           <button
             onClick={() => navigate('events')}
             className="hero-button rounded-2xl bg-teal-500 px-5 py-3 text-white font-semibold transition-all hover:bg-teal-400 active:scale-[0.98]"
@@ -372,7 +372,7 @@ export default function AdminPage() {
                   </label>
                 </div>
 
-                <label className="block text-sm text-slate-300">
+                <label className={`block text-sm ${labelText}`}>
                   Image URL
                   <input
                     value={form.image_url}
@@ -414,20 +414,20 @@ export default function AdminPage() {
                 <TrendingUp className="w-5 h-5" />
                 <h2 className="text-xl font-semibold">Live enrollment tracker</h2>
               </div>
-              <p className="text-slate-400 text-sm mb-6">
+              <p className={`text-sm mb-6 ${bodyText}`}>
                 Track tickets sold for your top events, updated every 8 seconds.
               </p>
               {events.length === 0 ? (
-                <p className="text-slate-400">No enrollment data available yet.</p>
+                <p className={bodyText}>No enrollment data available yet.</p>
               ) : (
                 <div className="space-y-5">
                   {eventSales.slice(0, 5).map((eventItem) => (
                     <div key={eventItem.id}>
-                      <div className="flex items-center justify-between text-sm text-slate-300 mb-2">
-                        <span className="font-semibold text-white line-clamp-1">{eventItem.title}</span>
-                        <span className="text-slate-400">{eventItem.tickets_sold} tickets</span>
+                      <div className={`flex items-center justify-between text-sm mb-2 ${bodyText}`}>
+                        <span className={`font-semibold ${headerText} line-clamp-1`}>{eventItem.title}</span>
+                        <span className={bodyText}>{eventItem.tickets_sold} tickets</span>
                       </div>
-                      <div className="h-3 rounded-full bg-slate-800 overflow-hidden">
+                      <div className={`h-3 rounded-full ${trackBg} overflow-hidden`}>
                         <div
                           className={`h-full rounded-full ${
                             eventItem.sold_pct >= 90
@@ -457,24 +457,24 @@ export default function AdminPage() {
                 <Users className="w-5 h-5" />
                 <h2 className="text-xl font-semibold">Event booking summary</h2>
               </div>
-              <p className="text-slate-400 text-sm mb-6">Total tickets sold for each event and remaining seat availability.</p>
+              <p className={`text-sm mb-6 ${bodyText}`}>Total tickets sold for each event and remaining seat availability.</p>
               {events.length === 0 ? (
-                <p className="text-slate-400">No booking data available yet.</p>
+                <p className={bodyText}>No booking data available yet.</p>
               ) : (
                 <div className="space-y-4">
                   <div className={`rounded-3xl p-5 ${cardPanel}`} >
                     <div className="text-sm text-slate-400 mb-2">Total tickets sold across events</div>
-                    <div className="text-3xl font-semibold text-white">{totalTicketsSold}</div>
+                    <div className={`text-3xl font-semibold ${headerText}`}>{totalTicketsSold}</div>
                   </div>
                   {eventSales.map((eventItem) => (
                     <div key={eventItem.id} className={`rounded-3xl p-5 ${cardPanel}`} >
                       <div className="flex items-center justify-between gap-2 mb-3">
                         <div>
                           <p className="text-sm text-slate-400">{eventItem.category}</p>
-                          <h3 className="font-semibold text-white">{eventItem.title}</h3>
+                          <h3 className={`font-semibold ${headerText}`}>{eventItem.title}</h3>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg font-semibold text-white">{eventItem.tickets_sold}</div>
+                          <div className={`text-lg font-semibold ${headerText}`}>{eventItem.tickets_sold}</div>
                           <div className="text-xs text-slate-500">tickets sold</div>
                         </div>
                       </div>
@@ -496,19 +496,19 @@ export default function AdminPage() {
               <h2 className="text-xl font-semibold">Upcoming events</h2>
             </div>
             {loading ? (
-              <p className="text-slate-400">Loading events...</p>
+              <p className={bodyText}>Loading events...</p>
             ) : (
               <div className="space-y-4">
                 {events.length === 0 ? (
-                  <p className="text-slate-400">No events published yet.</p>
+                  <p className={bodyText}>No events published yet.</p>
                 ) : (
                   events.map((eventItem) => (
                     <div key={eventItem.id} className={`rounded-3xl p-4 ${cardPanel}`} >
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <p className="text-sm text-teal-300 uppercase tracking-[0.2em] mb-1">{eventItem.category}</p>
-                          <h3 className="font-semibold text-white">{eventItem.title}</h3>
-                          <p className="text-slate-400 text-sm mt-2 line-clamp-2">{eventItem.description}</p>
+                          <h3 className={`font-semibold ${headerText}`}>{eventItem.title}</h3>
+                          <p className={`text-sm mt-2 line-clamp-2 ${bodyText}`}>{eventItem.description}</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
                           <button
@@ -525,7 +525,7 @@ export default function AdminPage() {
                           </button>
                         </div>
                       </div>
-                      <div className="mt-4 grid gap-2 sm:grid-cols-2 text-sm text-slate-400">
+                      <div className={`mt-4 grid gap-2 sm:grid-cols-2 text-sm ${bodyText}`}>
                         <span className="flex items-center gap-2"><Calendar className="w-4 h-4" />{eventItem.date}</span>
                         <span className="flex items-center gap-2"><Clock className="w-4 h-4" />{eventItem.time}</span>
                         <span className="flex items-center gap-2"><MapPin className="w-4 h-4" />{eventItem.venue}</span>
