@@ -203,7 +203,7 @@ export default function AdminPage() {
       <div className={`min-h-screen flex items-center justify-center px-4 py-16 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
         <div className={`text-center max-w-xl rounded-3xl border p-10 shadow-2xl ${isDark ? 'border-slate-800 bg-slate-900/95 text-white' : 'border-slate-200 bg-white text-slate-900'}`}>
           <h1 className="text-3xl font-bold mb-4">Admin access required</h1>
-          <p className={`${bodyText} mb-6">Please sign in with your admin credentials to manage events.</p>
+          <p className={`${bodyText} mb-6`}>Please sign in with your admin credentials to manage events.</p>
           <button
             onClick={() => navigate('login')}
             className="hero-button rounded-2xl bg-teal-500 px-5 py-3 text-white font-semibold transition-all hover:bg-teal-400 active:scale-[0.98]"
@@ -220,7 +220,7 @@ export default function AdminPage() {
       <div className={`min-h-screen flex items-center justify-center px-4 py-16 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
         <div className={`text-center max-w-xl rounded-3xl border p-10 shadow-2xl ${isDark ? 'border-slate-800 bg-slate-900/95 text-white' : 'border-slate-200 bg-white text-slate-900'}`}>
           <h1 className="text-3xl font-bold mb-4">Access denied</h1>
-          <p className={`${bodyText} mb-6">Only administrators can use this dashboard.</p>
+          <p className={`${bodyText} mb-6`}>Only administrators can use this dashboard.</p>
           <button
             onClick={() => navigate('events')}
             className="hero-button rounded-2xl bg-teal-500 px-5 py-3 text-white font-semibold transition-all hover:bg-teal-400 active:scale-[0.98]"
